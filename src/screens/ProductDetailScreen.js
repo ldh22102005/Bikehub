@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,189 +9,147 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useProducts } from '../hooks/useProducts';
 import { useFavorites } from '../hooks/useFavorites';
 
-const SIZES = ['S', 'M', 'L', 'XL'];
-const COLORS = ['#0F172A', '#0ea5e9', '#94a3b8'];
-
-const ProductDetailScreen = ({ onBack, onAddToCart, product, isDarkMode }) => {
-  // === 1. KHỞI TẠO STATE & HOOKS ===
-  const { products } = useProducts();
+const ProductDetailScreen = ({ product, onBack, onAddToCart }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const [selectedSize, setSelectedSize] = useState('S');
-  const [selectedColor, setSelectedColor] = useState('#0F172A');
-  const [userRating, setUserRating] = useState(0);
+  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedColor, setSelectedColor] = useState('#0ea5e9');
 
-  // === 2. XỬ LÝ LOGIC DỮ LIỆU (MEMO) ===
-  const fallback = products?.[0];
-  const currentProduct = useMemo(() => product ?? fallback, [product, fallback]);
-  const isFav = isFavorite(currentProduct?.id);
-  const productImages = useMemo(() => {
-    const imgs = currentProduct?.images?.length ? currentProduct.images : currentProduct?.image ? [currentProduct.image] : [];
-    return imgs.length ? imgs : fallback?.images?.length ? fallback.images : fallback?.image ? [fallback.image] : [];
-  }, [currentProduct, fallback]);
-  const productImage = productImages?.[0];
-  const productName = currentProduct?.name ?? 'Bike';
-  const productPrice = currentProduct?.price ?? '$0.00';
+  if (!product) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={onBack} style={{ padding: 20 }}>
+          <Ionicons name="arrow-back" size={24} color="#334155" />
+        </TouchableOpacity>
+        <Text style={{ textAlign: 'center', marginTop: 50, color: '#64748B' }}>
+          Không tìm thấy thông tin sản phẩm
+        </Text>
+      </SafeAreaView>
+    );
+  }
 
-  const bg = isDarkMode ? '#0F172A' : '#FFF';
-  const cardBg = isDarkMode ? '#1E293B' : '#F8FAFC';
-  const textMain = isDarkMode ? '#F8FAFC' : '#334155';
-  const textTitle = isDarkMode ? '#F8FAFC' : '#1e293b';
-  const border = isDarkMode ? '#334155' : '#F1F5F9';
-  const bottomBarBg = isDarkMode ? '#1E293B' : '#FFF';
+  const isFav = isFavorite(product.id);
+  const sizes = ['S', 'M', 'L', 'XL'];
+  const colors = ['#0ea5e9', '#334155', '#ef4444', '#10b981'];
 
-  // === 3. RENDER GIAO DIỆN CHÍNH ===
+  const handleAddToCart = () => {
+    onAddToCart?.({ product, size: selectedSize, color: selectedColor });
+  };
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: bg }]}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack}>
-          <Ionicons name="arrow-back" size={24} color={textMain} />
+        <TouchableOpacity onPress={onBack} style={styles.iconBtn}>
+          <Ionicons name="arrow-back" size={24} color="#334155" />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textMain }]}>Bike World</Text>
-        <View style={styles.headerIcons}>
-        <TouchableOpacity style={styles.headerIconBtn} onPress={() => toggleFavorite(currentProduct)}>
-          <Ionicons name={isFav ? "heart" : "heart-outline"} size={24} color={isFav ? "#ef4444" : "#0ea5e9"} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
-            <Feather name="share-2" size={22} color="#0ea5e9" />
+        <Text style={styles.headerTitle}>Chi tiết</Text>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => toggleFavorite(product)}>
+            <Ionicons name={isFav ? "heart" : "heart-outline"} size={24} color={isFav ? "#ef4444" : "#334155"} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Product Image Carousel Area */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Image Section */}
         <View style={styles.imageContainer}>
-          {!!productImage && <Image source={productImage} style={styles.mainImage} resizeMode="contain" />}
-          {/* Pagination dots imitation */}
-          <View style={styles.pagination}>
-            {Array.from({ length: Math.max(1, Math.min(5, productImages.length || 0)) }).map((_, idx) => (
-              <View key={idx} style={[styles.dot, idx === 0 && styles.activeDot]} />
-            ))}
-          </View>
+          <Image source={product.image} style={styles.image} resizeMode="contain" />
         </View>
 
-        <View style={styles.detailsContainer}>
-          <Text style={styles.tag}>NEW ARRIVAL</Text>
-          <Text style={[styles.productName, { color: textTitle }]}>{productName}</Text>
+        {/* Info Section */}
+        <View style={styles.infoContainer}>
+          <View style={styles.tagBadge}>
+            <Text style={styles.tagText}>{product.tag || 'NEW ARRIVAL'}</Text>
+          </View>
+          
+          <Text style={styles.productName}>{product.name}</Text>
           
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={16} color="#F59E0B" />
-            <Ionicons name="star" size={16} color="#F59E0B" />
-            <Ionicons name="star" size={16} color="#F59E0B" />
-            <Ionicons name="star" size={16} color="#F59E0B" />
-            <Ionicons name="star-half" size={16} color="#F59E0B" />
-            <Text style={styles.ratingText}>4.8 (124 đánh giá)</Text>
+            <Text style={styles.ratingText}>{product.rating || '4.8'} (120 Đánh giá)</Text>
           </View>
 
           <View style={styles.priceRow}>
-            <Text style={styles.price}>{productPrice}</Text>
-            <Text style={styles.oldPrice}>$4,999.00</Text>
+            <Text style={styles.price}>{product.price}</Text>
+            {product.oldPrice && <Text style={styles.oldPrice}>{product.oldPrice}</Text>}
           </View>
-
-          <Text style={styles.description}>
-            Designed for the uncompromising rider, the Stratus Pro combines an ultra-lightweight carbon frame with professional-grade aerodynamics. Experience the sensation of pure speed and effortless climbing with our most advanced drivetrain system yet.
-          </Text>
 
           {/* Specs Grid */}
           <View style={styles.specsGrid}>
-            <View style={[styles.specItem, { backgroundColor: cardBg }]}>
-              <Feather name="shopping-bag" size={20} color="#0ea5e9" />
-              <View style={styles.specTextContent}>
-                <Text style={styles.specLabel}>WEIGHT</Text>
-                <Text style={[styles.specValue, { color: textMain }]}>6.8 kg</Text>
+            <View style={styles.specItem}>
+              <View style={styles.specIconBox}>
+                <MaterialCommunityIcons name="weight-kilogram" size={20} color="#0ea5e9" />
               </View>
+              <Text style={styles.specLabel}>Weight</Text>
+              <Text style={styles.specValue}>9.8 kg</Text>
             </View>
-            <View style={[styles.specItem, { backgroundColor: cardBg }]}>
-              <MaterialCommunityIcons name="layers-triple-outline" size={20} color="#0ea5e9" />
-              <View style={styles.specTextContent}>
-                <Text style={styles.specLabel}>GROUP SET</Text>
-                <Text style={[styles.specValue, { color: textMain }]}>Shimano Ultegra</Text>
+            <View style={styles.specItem}>
+              <View style={styles.specIconBox}>
+                <MaterialCommunityIcons name="layers-triple-outline" size={20} color="#0ea5e9" />
               </View>
+              <Text style={styles.specLabel}>Group set</Text>
+              <Text style={styles.specValue}>Shimano</Text>
             </View>
-            <View style={[styles.specItem, { backgroundColor: cardBg }]}>
-              <MaterialCommunityIcons name="speedometer" size={20} color="#0ea5e9" />
-              <View style={styles.specTextContent}>
-                <Text style={styles.specLabel}>GEARS</Text>
-                <Text style={[styles.specValue, { color: textMain }]}>22 Speed</Text>
+            <View style={styles.specItem}>
+              <View style={styles.specIconBox}>
+                <MaterialCommunityIcons name="speedometer" size={20} color="#0ea5e9" />
               </View>
+              <Text style={styles.specLabel}>Gears</Text>
+              <Text style={styles.specValue}>21 Speed</Text>
             </View>
-            <View style={[styles.specItem, { backgroundColor: cardBg }]}>
-              <Ionicons name="scan-outline" size={20} color="#0ea5e9" />
-              <View style={styles.specTextContent}>
-                <Text style={styles.specLabel}>MATERIAL</Text>
-                <Text style={[styles.specValue, { color: textMain }]}>T1100 Carbon</Text>
+            <View style={styles.specItem}>
+              <View style={styles.specIconBox}>
+                <Ionicons name="scan-outline" size={20} color="#0ea5e9" />
               </View>
+              <Text style={styles.specLabel}>Material</Text>
+              <Text style={styles.specValue}>Carbon</Text>
             </View>
           </View>
 
-          {/* Select Size */}
-          <Text style={[styles.sectionTitle, { color: textMain }]}>Select Frame Size</Text>
-          <View style={styles.optionsRow}>
-            {SIZES.map((size) => (
-              <TouchableOpacity 
-                key={size} 
-                onPress={() => setSelectedSize(size)}
-                style={[styles.sizeBtn, { backgroundColor: cardBg, borderColor: border }, selectedSize === size && styles.activeSizeBtn]}
-              >
-                <Text style={[styles.sizeText, selectedSize === size && styles.activeSizeText]}>{size}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {/* Selection: Size & Color */}
+          <View style={styles.selectionContainer}>
+            <View style={styles.selectionBlock}>
+              <Text style={styles.selectionTitle}>Kích thước</Text>
+              <View style={styles.sizeRow}>
+                {sizes.map((s) => (
+                  <TouchableOpacity 
+                    key={s} 
+                    style={[styles.sizeBtn, selectedSize === s && styles.sizeBtnActive]}
+                    onPress={() => setSelectedSize(s)}
+                  >
+                    <Text style={[styles.sizeText, selectedSize === s && styles.sizeTextActive]}>{s}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
 
-          {/* Select Color */}
-          <Text style={[styles.sectionTitle, { color: textMain }]}>Frame Color</Text>
-          <View style={styles.optionsRow}>
-            {COLORS.map((color) => (
-              <TouchableOpacity 
-                key={color} 
-                onPress={() => setSelectedColor(color)}
-                style={[
-                  styles.colorCircle, 
-                  { backgroundColor: color },
-                  selectedColor === color && styles.activeColorCircle
-                ]} 
-              />
-            ))}
-          </View>
-
-          {/* Đánh giá của người dùng */}
-          <Text style={[styles.sectionTitle, { color: textMain }]}>Đánh giá của bạn</Text>
-          <View style={styles.ratingInputRow}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <TouchableOpacity key={star} onPress={() => setUserRating(star)}>
-                <Ionicons
-                  name={userRating >= star ? 'star' : 'star-outline'}
-                  size={32}
-                  color="#F59E0B"
-                  style={{ marginRight: 8 }}
-                />
-              </TouchableOpacity>
-            ))}
-            {userRating > 0 && <Text style={styles.thanksText}>Cảm ơn bạn!</Text>}
+            <View style={styles.selectionBlock}>
+              <Text style={styles.selectionTitle}>Màu sắc</Text>
+              <View style={styles.colorRow}>
+                {colors.map((c) => (
+                  <TouchableOpacity 
+                    key={c} 
+                    style={[styles.colorBtn, { backgroundColor: c }, selectedColor === c && styles.colorBtnActive]}
+                    onPress={() => setSelectedColor(c)}
+                  >
+                    {selectedColor === c && <Feather name="check" size={12} color="#FFF" />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
 
-      {/* Bottom Actions */}
-      <View style={[styles.bottomBar, { backgroundColor: bottomBarBg, borderTopColor: border }]}>
-        <TouchableOpacity style={[styles.cartBtn, { borderColor: border }]}>
-          <Feather name="shopping-cart" size={20} color={textMain} />
+      {/* Bottom Bar */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity style={styles.cartBtn} onPress={() => onAddToCart?.({ product, size: selectedSize, color: selectedColor })}>
+          <Feather name="shopping-bag" size={24} color="#334155" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.addBtn}
-          onPress={() =>
-            onAddToCart?.({
-              product: currentProduct,
-              size: selectedSize,
-              color: selectedColor,
-            })
-          }
-        >
-          <Text style={styles.addBtnText}>Add to Cart</Text>
-          <Feather name="arrow-right" size={20} color="#FFF" />
+        <TouchableOpacity style={styles.addBtn} onPress={handleAddToCart}>
+          <Text style={styles.addBtnText}>Thêm vào giỏ</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -199,253 +157,43 @@ const ProductDetailScreen = ({ onBack, onAddToCart, product, isDarkMode }) => {
 };
 
 const styles = StyleSheet.create({
-  // ==========================================
-  // BỐ CỤC CHÍNH
-  // ==========================================
-  container: { 
-    flex: 1, 
-    backgroundColor: '#FFF' 
-  },
-  scrollContent: { 
-    paddingBottom: 140 
-  },
-
-  // ==========================================
-  // PHẦN HEADER
-  // ==========================================
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    padding: 20 
-  },
-  headerTitle: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    color: '#334155' 
-  },
-  headerIcons: { 
-    flexDirection: 'row' 
-  },
-  headerIconBtn: { 
-    marginRight: 15 
-  },
-
-  // ==========================================
-  // HÌNH ẢNH SẢN PHẨM & TRƯỢT ẢNH
-  // ==========================================
-  imageContainer: { 
-    height: 300, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  mainImage: { 
-    width: '90%', 
-    height: '100%' 
-  },
-  pagination: { 
-    flexDirection: 'row', 
-    position: 'absolute', 
-    bottom: 20 
-  },
-  dot: { 
-    width: 6, 
-    height: 6, 
-    borderRadius: 3, 
-    backgroundColor: '#E2E8F0', 
-    marginHorizontal: 3 
-  },
-  activeDot: { 
-    backgroundColor: '#0ea5e9', 
-    width: 12 
-  },
-
-  // ==========================================
-  // THÔNG TIN CƠ BẢN SẢN PHẨM
-  // ==========================================
-  detailsContainer: { 
-    paddingHorizontal: 20, 
-    marginTop: 10 
-  },
-  tag: { 
-    fontSize: 10, 
-    color: '#0ea5e9', 
-    fontWeight: 'bold', 
-    letterSpacing: 1 
-  },
-  productName: { 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    color: '#1e293b', 
-    marginTop: 5 
-  },
-  ratingRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginTop: 8 
-  },
-  ratingText: { 
-    fontSize: 13, 
-    color: '#64748B', 
-    marginLeft: 8, 
-    fontWeight: '600' 
-  },
-  priceRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginTop: 10 
-  },
-  price: { 
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    color: '#0ea5e9', 
-    marginRight: 10 
-  },
-  oldPrice: { 
-    fontSize: 14, 
-    color: '#94a3b8', 
-    textDecorationLine: 'line-through' 
-  },
-  description: { 
-    fontSize: 14, 
-    color: '#64748B', 
-    lineHeight: 22, 
-    marginTop: 15 
-  },
-
-  // ==========================================
-  // BẢNG THÔNG SỐ KỸ THUẬT (SPECS)
-  // ==========================================
-  specsGrid: { 
-    flexDirection: 'row', 
-    flexWrap: 'wrap', 
-    justifyContent: 'space-between', 
-    marginTop: 25 
-  },
-  specItem: { 
-    width: '48%', 
-    backgroundColor: '#F8FAFC', 
-    borderRadius: 12, 
-    padding: 15, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginBottom: 12 
-  },
-  specTextContent: { 
-    marginLeft: 10 
-  },
-  specLabel: { 
-    fontSize: 10, 
-    color: '#94a3b8', 
-    fontWeight: 'bold' 
-  },
-  specValue: { 
-    fontSize: 12, 
-    fontWeight: 'bold', 
-    color: '#334155' 
-  },
-
-  // ==========================================
-  // TÙY CHỌN SẢN PHẨM (SIZE & MÀU MÀU)
-  // ==========================================
-  sectionTitle: { 
-    fontSize: 15, 
-    fontWeight: 'bold', 
-    color: '#334155', 
-    marginTop: 20, 
-    marginBottom: 15 
-  },
-  optionsRow: { 
-    flexDirection: 'row', 
-    marginBottom: 10 
-  },
-  sizeBtn: { 
-    width: 50, 
-    height: 40, 
-    borderRadius: 10, 
-    borderWidth: 1, 
-    borderColor: '#F1F5F9', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginRight: 12, 
-    backgroundColor: '#F8FAFC' 
-  },
-  activeSizeBtn: { 
-    borderColor: '#0ea5e9', 
-    backgroundColor: '#E0F2FE' 
-  },
-  sizeText: { 
-    color: '#64748B', 
-    fontWeight: '600' 
-  },
-  activeSizeText: { 
-    color: '#0ea5e9' 
-  },
-  colorCircle: { 
-    width: 34, 
-    height: 34, 
-    borderRadius: 17, 
-    marginRight: 15, 
-    borderWidth: 3, 
-    borderColor: 'transparent' 
-  },
-  activeColorCircle: { 
-    borderColor: '#E0F2FE' 
-  },
-
-  // ==========================================
-  // ĐÁNH GIÁ (RATING INPUT)
-  // ==========================================
-  ratingInputRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginBottom: 20 
-  },
-  thanksText: { 
-    color: '#22c55e', 
-    fontWeight: 'bold', 
-    marginLeft: 5 
-  },
-
-  // ==========================================
-  // THANH ĐIỀU HƯỚNG MUA HÀNG DƯỚI CÙNG
-  // ==========================================
-  bottomBar: { 
-    flexDirection: 'row', 
-    padding: 20, 
-    borderTopWidth: 1, 
-    borderTopColor: '#F1F5F9', 
-    position: 'absolute', 
-    bottom: 0, 
-    backgroundColor: '#FFF', 
-    width: '100%', 
-    alignItems: 'center' 
-  },
-  cartBtn: { 
-    width: 50, 
-    height: 50, 
-    borderRadius: 12, 
-    borderWidth: 1, 
-    borderColor: '#F1F5F9', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginRight: 15 
-  },
-  addBtn: { 
-    flex: 1, 
-    height: 50, 
-    backgroundColor: '#0ea5e9', 
-    borderRadius: 12, 
-    flexDirection: 'row', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  addBtnText: { 
-    color: '#FFF', 
-    fontWeight: 'bold', 
-    fontSize: 16, 
-    marginRight: 10 
-  },
+  container: { flex: 1, backgroundColor: '#FFF' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 10 },
+  iconBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#1e293b' },
+  headerRight: { flexDirection: 'row' },
+  scrollContent: { paddingBottom: 100 },
+  imageContainer: { width: '100%', height: 280, backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 },
+  image: { width: '80%', height: '80%' },
+  infoContainer: { padding: 20 },
+  tagBadge: { alignSelf: 'flex-start', backgroundColor: '#E0F2FE', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, marginBottom: 10 },
+  tagText: { color: '#0ea5e9', fontSize: 12, fontWeight: 'bold' },
+  productName: { fontSize: 24, fontWeight: 'bold', color: '#1e293b', marginBottom: 10 },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
+  ratingText: { fontSize: 14, color: '#64748B', marginLeft: 5, fontWeight: '500' },
+  priceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 20 },
+  price: { fontSize: 24, fontWeight: 'bold', color: '#0ea5e9', marginRight: 10 },
+  oldPrice: { fontSize: 16, color: '#94a3b8', textDecorationLine: 'line-through', marginLeft: 10 },
+  specsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 },
+  specItem: { width: '48%', backgroundColor: '#F8FAFC', borderRadius: 16, padding: 15, alignItems: 'flex-start', marginBottom: 15, borderWidth: 1, borderColor: '#F1F5F9' },
+  specIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#E0F2FE', justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
+  specLabel: { fontSize: 12, color: '#64748B', fontWeight: '600', marginBottom: 4 },
+  specValue: { fontSize: 14, fontWeight: 'bold', color: '#1e293b' },
+  selectionContainer: { flexDirection: 'column', marginBottom: 20 },
+  selectionBlock: { marginBottom: 15 },
+  selectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#1e293b', marginBottom: 10 },
+  sizeRow: { flexDirection: 'row' },
+  sizeBtn: { width: 40, height: 40, borderRadius: 10, backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center', marginRight: 10, borderWidth: 1, borderColor: '#F1F5F9' },
+  sizeBtnActive: { backgroundColor: '#0ea5e9', borderColor: '#0ea5e9' },
+  sizeText: { fontSize: 14, fontWeight: '600', color: '#64748B' },
+  sizeTextActive: { color: '#FFF' },
+  colorRow: { flexDirection: 'row' },
+  colorBtn: { width: 35, height: 35, borderRadius: 17.5, justifyContent: 'center', alignItems: 'center', marginRight: 10, borderWidth: 2, borderColor: '#FFF', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
+  colorBtnActive: { borderColor: '#0ea5e9', borderWidth: 2 },
+  bottomBar: { flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 15, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: '#F1F5F9', position: 'absolute', bottom: 0, width: '100%' },
+  cartBtn: { width: 55, height: 55, borderRadius: 16, backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center', marginRight: 15, borderWidth: 1, borderColor: '#F1F5F9' },
+  addBtn: { flex: 1, height: 55, backgroundColor: '#0ea5e9', borderRadius: 16, justifyContent: 'center', alignItems: 'center', shadowColor: '#0ea5e9', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
+  addBtnText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' }
 });
 
 export default ProductDetailScreen;

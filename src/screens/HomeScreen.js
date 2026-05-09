@@ -34,6 +34,9 @@ const HomeScreen = ({ user, onOpenProduct, onOpenChat }) => {
     return base.slice(0, 4);
   }, [products, selectedCategoryLabel]);
 
+  // Sản phẩm nổi bật (Lấy sản phẩm thứ 2 để không trùng với Hero Banner)
+  const featuredProduct = useMemo(() => products?.[1] || products?.[0], [products]);
+
   // === 3. TẠO CẤU TRÚC GIAO DIỆN CHÍNH ===
   return (
     <SafeAreaView style={styles.container}>
@@ -94,6 +97,38 @@ const HomeScreen = ({ user, onOpenProduct, onOpenChat }) => {
             })}
           </ScrollView>
         </View>
+
+        {/* --- Sản Phẩm Nổi Bật --- */}
+        {featuredProduct && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Sự lựa chọn tốt nhất</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.featuredCard}
+              activeOpacity={0.9}
+              onPress={() => onOpenProduct?.(featuredProduct)}
+            >
+              <View style={styles.featuredImageBg}>
+                <Image source={featuredProduct.image} style={styles.featuredImg} resizeMode="contain" />
+                <View style={styles.featuredTag}>
+                  <Text style={styles.featuredTagText}>HOT</Text>
+                </View>
+              </View>
+              <View style={styles.featuredInfo}>
+                <Text style={styles.featuredCategory}>{featuredProduct.category}</Text>
+                <Text style={styles.featuredName} numberOfLines={2}>{featuredProduct.name}</Text>
+                <View style={styles.featuredPriceRow}>
+                  <Text style={styles.featuredPrice}>{featuredProduct.price}</Text>
+                  <View style={styles.featuredRating}>
+                    <Ionicons name="star" size={12} color="#F59E0B" />
+                    <Text style={styles.featuredRatingText}>{featuredProduct.rating || '4.9'}</Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* --- Gợi Ý Sản Phẩm (Gird) --- */}
         <View style={styles.section}>
@@ -301,6 +336,91 @@ const styles = StyleSheet.create({
   },
   catTextActive: { 
     color: '#FFF' 
+  },
+
+  // ==========================================
+  // SẢN PHẨM NỔI BẬT
+  // ==========================================
+  featuredCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    flexDirection: 'row',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  featuredImageBg: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  featuredImg: {
+    width: '90%',
+    height: '90%',
+  },
+  featuredTag: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  featuredTagText: {
+    color: '#FFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  featuredInfo: {
+    flex: 1,
+    marginLeft: 16,
+    justifyContent: 'center',
+  },
+  featuredCategory: {
+    fontSize: 11,
+    color: '#0EA5E9',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  featuredName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 12,
+  },
+  featuredPriceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  featuredPrice: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1E293B',
+  },
+  featuredRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  featuredRatingText: {
+    fontSize: 12,
+    color: '#D97706',
+    fontWeight: 'bold',
+    marginLeft: 4,
   },
 
   // ==========================================
