@@ -15,7 +15,6 @@ import { useProducts } from './src/hooks/useProducts';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import HomeScreen from './src/screens/HomeScreen';
-import SearchScreen from './src/screens/SearchScreen';
 import ProductScreen from './src/screens/ProductScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import CartScreen from './src/screens/CartScreen';
@@ -236,8 +235,6 @@ function AppInner() {
             }}
           />
         );
-      case 'Search':
-        return <SearchScreen onBackHome={() => setCurrentScreen('Home')} onProfile={() => setCurrentScreen('Profile')} />;
       case 'Product':
         return (
           <ProductScreen
