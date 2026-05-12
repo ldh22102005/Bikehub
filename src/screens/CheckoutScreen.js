@@ -42,7 +42,7 @@ const CheckoutScreen = ({ onBack, onPlaceOrder, cartItems = [], isDarkMode }) =>
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollBody} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollBody} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <Text style={[styles.pageTitle, { color: textMain }]}>Checkout</Text>
         <Text style={styles.pageSubtitle}>Complete your purchase to start your next adventure.</Text>
 

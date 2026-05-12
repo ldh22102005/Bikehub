@@ -23,15 +23,13 @@ const RegisterScreen = ({ onRegister, onNavigateToLogin, errorText }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-          style={styles.container}
-        >
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.card}>
+  const content = (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <View style={styles.card}>
               <Text style={styles.headerTitle}>Tạo tài khoản</Text>
               <Text style={styles.headerSubtitle}>
                 Tham gia cộng đồng để bắt đầu những hành trình mới cùng Bike World
@@ -138,9 +136,17 @@ const RegisterScreen = ({ onRegister, onNavigateToLogin, errorText }) => {
                 <Text style={styles.footerLinkText}>Đã có tài khoản? Đăng nhập tại đây</Text>
               </TouchableOpacity>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {Platform.OS === 'web' ? content : (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          {content}
+        </TouchableWithoutFeedback>
+      )}
     </SafeAreaView>
   );
 };

@@ -21,18 +21,17 @@ const LoginScreen = ({ onNavigateToRegister, onLogin, onSocialLogin, errorText }
   const [password, setPassword] = useState('');
 
   // === 2. RENDER GIAO DIỆN FORM ĐĂNG NHẬP ===
-  return (
-    <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-          style={styles.container}
-        >
-          <ScrollView 
-            contentContainerStyle={styles.scrollContent} 
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.card}>
+  const content = (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.card}>
               <Text style={styles.headerTitle}>Chào mừng</Text>
               <Text style={styles.headerSubtitle}>
                 Bắt đầu hành trình chinh phục những cung đường mới
@@ -110,9 +109,17 @@ const LoginScreen = ({ onNavigateToRegister, onLogin, onSocialLogin, errorText }
                 <Text style={styles.footerLinkText}>Chưa có tài khoản? Đăng ký ngay</Text>
               </TouchableOpacity>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {Platform.OS === 'web' ? content : (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          {content}
+        </TouchableWithoutFeedback>
+      )}
     </SafeAreaView>
   );
 };
