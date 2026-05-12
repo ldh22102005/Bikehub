@@ -88,11 +88,11 @@ npx expo start -c
 * Ghi chú: Tài khoản này có quyền truy cập vào màn hình Dashboard và Quản lý kho hàng.
 
 ## Link online đã deploy
-* **Link trải nghiệm:** [👉 Nhấn vào đây để xem dự án thực tế](https://deploybikeworld.netlify.app)
+* **Link trải nghiệm:** [ Nhấn vào đây để xem dự án thực tế](https://deploybikeworld.netlify.app)
 * **Ghi chú**: Đây là bản Web Build từ nền tảng ứng dụng di động React Native Expo. Để có trải nghiệm tốt nhất trên máy tính, vui lòng nhấn `F12` và bật chế độ giả lập điện thoại (Toggle device toolbar).
 
 ## Video Demo & Thuyết trình
-* **Link Video:** [👉 Nhấn vào đây để xem Video Demo của nhóm](https://[DIEN-LINK-VIDEO-CUA-BAN-VAO-DAY])
+* **Link Video:** [Nhấn vào đây để xem Video Demo của nhóm](https://www.youtube.com/watch?v=7CUROCXXDg8)
 * **Ghi chú**: Trong video này, nhóm chúng em có trình bày chi tiết về kiến trúc hệ thống, giải thích các logic code cốt lõi và demo trực tiếp các luồng chức năng thực tế của ứng dụng.
 
 ## Hình ảnh minh họa hệ thống
