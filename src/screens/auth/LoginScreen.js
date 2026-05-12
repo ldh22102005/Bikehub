@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   headerTitle: { 
     fontSize: 32, 
     fontWeight: 'bold', 
-    color: '#06261B',
+    color: '#0ea5e9',
     fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'sans-serif-medium' 
   },
   headerSubtitle: { 
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     borderRadius: 20 
   },
   activeTab: { 
-    backgroundColor: '#06261B' 
+    backgroundColor: '#0ea5e9' 
   },
   tabText: { 
     color: '#666', 
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 12, 
     fontWeight: 'bold', 
     marginBottom: 8,
-    color: '#06261B' 
+    color: '#1e293b' 
   },
   input: { 
     backgroundColor: '#F5F5F5', 
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     fontSize: 13 
   },
   mainButton: { 
-    backgroundColor: '#06261B', 
+    backgroundColor: '#0ea5e9', 
     width: '100%', 
     paddingVertical: 18, 
     borderRadius: 12, 
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   footerLinkText: { 
     fontSize: 14, 
-    color: '#06261B', 
+    color: '#0ea5e9', 
     textDecorationLine: 'underline',
     fontWeight: '500' 
   },

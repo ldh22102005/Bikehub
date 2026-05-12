@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 30,
     fontWeight: '900',
-    color: '#06261B',
+    color: '#0ea5e9',
     marginBottom: 10,
     fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'sans-serif-medium',
   },
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   activeTab: {
-    backgroundColor: '#06261B',
+    backgroundColor: '#0ea5e9',
   },
   tabText: {
     fontSize: 12,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#06261B',
+    color: '#1e293b',
     marginBottom: 8,
     marginLeft: 5,
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   // NÚT CHÍNH (ĐĂNG KÝ)
   // ==========================================
   mainButton: {
-    backgroundColor: '#06261B',
+    backgroundColor: '#0ea5e9',
     borderRadius: 12,
     paddingVertical: 18,
     alignItems: 'center',
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   footerLinkText: {
-    color: '#06261B',
+    color: '#0ea5e9',
     fontSize: 13,
     fontWeight: '600',
     textDecorationLine: 'underline',

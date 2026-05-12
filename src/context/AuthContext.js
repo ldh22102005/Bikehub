@@ -4,8 +4,8 @@ import React, { createContext, useCallback, useEffect, useMemo, useState } from 
 export const AuthContext = createContext(null);
 
 const DEFAULT_USERS = {
-  'demo@bikehub.com': { name: 'Demo User', password: '123456', role: 'user' },
-  'admin@bikehub.com': { name: 'Admin', password: 'admin', role: 'admin' },
+  'demo@bikeworld.com': { name: 'Demo User', password: '123456', role: 'user' },
+  'admin@bikeworld.com': { name: 'Admin', password: 'admin', role: 'admin' },
 };
 
 export const AuthProvider = ({ children }) => {
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
       const found = usersByEmail[normalizedEmail];
       if (!found || found.password !== normalizedPassword) {
-        setError('Email hoac mat khau khong dung. (Demo: demo@bikehub.com / 123456)');
+        setError('Email hoac mat khau khong dung. (Demo: demo@bikeworld.com / 123456)');
         return false;
       }
 
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      if (normalizedEmail === 'admin@bikehub.com') {
+      if (normalizedEmail === 'admin@bikeworld.com') {
         setError('Email nay da duoc danh rieng cho admin.');
         return false;
       }
@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }) => {
   // Đăng nhập nhanh qua Mạng xã hội (Mock giả lập)
   const socialSignIn = useCallback(
     async (provider) => {
-      const email = `${provider.toLowerCase()}@bikehub.com`;
+      const email = `${provider.toLowerCase()}@bikeworld.com`;
       const name = `${provider} User`;
 
       const nextUser = { email, name, role: 'user', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200' };
